@@ -34,7 +34,7 @@ const WeatherSection = () => {
           </div>
         </div>
       </div>
-      <Suspense fallback={<></>}>
+      <Suspense fallback={<>Loading</>}>
         <HistoryList />
       </Suspense>
     </div>
