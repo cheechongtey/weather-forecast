@@ -5,8 +5,24 @@ import { Search, Trash } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 
-const HistoryItem = ({ name, date }: { name: string; date: string }) => {
-  const onDelete = () => {}
+const HistoryItem = ({
+  name,
+  date,
+  id,
+}: {
+  name: string
+  date: string
+  id: number
+}) => {
+  const onDelete = async (id: number) => {
+    const resp = await fetch(
+      `${process.env.NEXT_PUBLIC_APP_ORIGIN}/api/search`,
+      {
+        method: "DELETE",
+        body: JSON.stringify({ id }),
+      }
+    )
+  }
 
   const onSearch = () => {}
 
@@ -23,7 +39,7 @@ const HistoryItem = ({ name, date }: { name: string; date: string }) => {
           <Button variant="ghost" size="icon" onClick={() => onSearch()}>
             <Search className="size-[1.5rem]" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => onDelete()}>
+          <Button variant="ghost" size="icon" onClick={() => onDelete(id)}>
             <Trash className="size-[1.5rem]" />
           </Button>
         </div>

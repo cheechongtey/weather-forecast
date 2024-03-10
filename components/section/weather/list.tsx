@@ -23,6 +23,7 @@ const HistoryList = async () => {
         {historyData.map((x, key) => (
           <HistoryItem
             key={key}
+            id={x.id}
             name={x.location_name}
             date={dayjs(x.created_at).format("DD-MM-YYYY hh:mma")}
           />
