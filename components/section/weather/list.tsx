@@ -1,5 +1,4 @@
 import React from "react"
-import { NextResponse } from "next/server"
 import dayjs from "dayjs"
 
 import { HistoryApiData } from "@/types/history.api"
@@ -9,7 +8,9 @@ import HistoryItem from "./item"
 const HistoryList = async () => {
   const resp = await fetch(`${process.env.NEXT_PUBLIC_APP_ORIGIN}/api/search`, {
     method: "GET",
+    cache: "no-store",
     next: {
+      revalidate: 1500,
       tags: ["history"],
     },
   })

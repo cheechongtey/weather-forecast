@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useCallback } from "react"
+import React, { useCallback, useContext } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import debounce from "lodash/debounce"
 import get from "lodash/get"
@@ -10,20 +10,18 @@ import { z } from "zod"
 
 import { OpenWeatherMapApiData } from "@/types/search.api"
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form"
+import { Form } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+
+import { WeatherContext } from "./provider"
 
 const formSchema = z.object({
   input: z.string().min(3, {
     message: "Please start search with minimum 3 characters",
   }),
 })
+
+export const Context = React.createContext({})
 
 type AutocompleteApiData = {
   features: AutocompleteApiFeaturesData[]
@@ -40,15 +38,14 @@ type AutocompleteApiFeaturesData = {
 
 const SearchForm = ({
   onSearch,
-  children,
 }: {
   onSearch: (
     lat: number,
     lon: number,
     name: string
   ) => Promise<OpenWeatherMapApiData | null>
-  children: React.ReactNode
 }) => {
+  const { onUpdateWeather } = useContext<any>(WeatherContext)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -101,54 +98,63 @@ const SearchForm = ({
     setOpen(false)
     setResults([])
     const resp = await onSearch(lat, lon, name)
+
+    if (resp) {
+      const { main, dt, name } = resp
+      onUpdateWeather({
+        humidity: main.humidity,
+        temp: main.temp,
+        temp_max: main.temp_max,
+        temp_min: main.temp_min,
+        name,
+        dt,
+      })
+    }
   }
 
   return (
-    <>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="mb-20 flex items-end gap-4"
-        >
-          <div className="relative flex-1">
-            <Input
-              placeholder="Start search with enter at least 3 characters"
-              onChange={onChange}
-              // onClick={() => setOpen(true)}
-              value={value}
-            />
-            {open && (
-              <div className="absolute inset-x-0 top-[51px] rounded-b-md bg-white shadow-md">
-                {isLoading ? (
-                  <div className="flex justify-center p-4">
-                    <Loader2 className="size-4 animate-spin" />
-                  </div>
-                ) : (
-                  <div className="flex flex-col">
-                    {results.map((x, key) => (
-                      <div
-                        key={key}
-                        className="cursor-pointer border-b p-4 text-xs font-semibold text-gray-800"
-                        onClick={() =>
-                          onClickLocation(
-                            x.properties.lat,
-                            x.properties.lon,
-                            x.properties.formatted
-                          )
-                        }
-                      >
-                        {x.properties.formatted}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </form>
-      </Form>
-      {children}
-    </>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mb-20 flex items-end gap-4"
+      >
+        <div className="relative flex-1">
+          <Input
+            placeholder="Start search with enter at least 3 characters"
+            onChange={onChange}
+            onClick={() => setOpen(true)}
+            value={value}
+          />
+          {open && (
+            <div className="absolute inset-x-0 top-[51px] rounded-b-md bg-white shadow-md">
+              {isLoading ? (
+                <div className="flex justify-center p-4">
+                  <Loader2 className="size-4 animate-spin" />
+                </div>
+              ) : (
+                <div className="flex flex-col">
+                  {results.map((x, key) => (
+                    <div
+                      key={key}
+                      className="cursor-pointer border-b p-4 text-xs font-semibold text-gray-800"
+                      onClick={() =>
+                        onClickLocation(
+                          x.properties.lat,
+                          x.properties.lon,
+                          x.properties.formatted
+                        )
+                      }
+                    >
+                      {x.properties.formatted}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </form>
+    </Form>
   )
 }
 
