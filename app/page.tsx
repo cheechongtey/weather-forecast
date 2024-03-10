@@ -3,7 +3,7 @@ import { onSearchLocation } from "@/action/search"
 import { Provider } from "@/components/section/provider"
 import WeatherSection from "@/components/section/weather"
 
-import SearchForm from "../../components/section/search-form"
+import SearchForm from "../components/section/search-form"
 
 export default function IndexPage() {
   return (
