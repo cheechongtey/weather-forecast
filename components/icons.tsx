@@ -1,7 +1,9 @@
 import {
   LucideProps,
   Moon,
+  Search,
   SunMedium,
+  Trash,
   Twitter,
   type Icon as LucideIcon,
 } from "lucide-react"
@@ -9,6 +11,8 @@ import {
 export type Icon = LucideIcon
 
 export const Icons = {
+  search: Search,
+  trash: Trash,
   sun: SunMedium,
   moon: Moon,
   twitter: Twitter,

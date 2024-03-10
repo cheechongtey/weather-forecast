@@ -1,0 +1,12 @@
+.geoapify-autocomplete-input {
+  position: relative;
+  display: flex;
+  height: 2.5rem;
+  width: 100%;
+  border-width: 1px;
+  border-color: hsl(var(--input));
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  border-radius: 6px;
+}
